@@ -7,6 +7,8 @@ import com.victor.approval.approval_flow_service.dto.PagedResponseDto;
 import com.victor.approval.approval_flow_service.entity.ApprovalRequest;
 import com.victor.approval.approval_flow_service.entity.ApprovalStatus;
 import com.victor.approval.approval_flow_service.event.ApprovalRequestCreatedEvent;
+import com.victor.approval.approval_flow_service.exception.ApprovalRequestNotFoundException;
+import com.victor.approval.approval_flow_service.exception.InvalidApprovalStatusException;
 import com.victor.approval.approval_flow_service.mapper.ApprovalRequestMapper;
 import com.victor.approval.approval_flow_service.repository.ApprovalRequestRepository;
 import com.victor.approval.approval_flow_service.service.IApprovalRequestService;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -79,7 +82,7 @@ public class ApprovalRequestServiceImpl implements IApprovalRequestService {
     public ApprovalRequestResponseDto getRequestById(UUID id) {
         log.info("Fetching approval request with ID: {}", id);
         ApprovalRequest request = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Approval request not found with ID: " + id));
+                .orElseThrow(() -> new ApprovalRequestNotFoundException(id));
         return mapper.toResponseDto(request);
     }
     
@@ -88,14 +91,15 @@ public class ApprovalRequestServiceImpl implements IApprovalRequestService {
         log.info("Approving request with ID: {}", id);
         
         ApprovalRequest request = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Approval request not found with ID: " + id));
+                .orElseThrow(() -> new ApprovalRequestNotFoundException(id));
         
         if (request.getStatus() != ApprovalStatus.PENDING) {
-            throw new RuntimeException("Request is not in pending status");
+            throw new InvalidApprovalStatusException("Request is not in pending status");
         }
         
         request.setStatus(ApprovalStatus.APPROVED);
         request.setComment(actionDto.getComment());
+        request.setUpdatedAt(LocalDateTime.now());
         
         ApprovalRequest savedRequest = repository.save(request);
         
@@ -114,14 +118,15 @@ public class ApprovalRequestServiceImpl implements IApprovalRequestService {
         log.info("Rejecting request with ID: {}", id);
         
         ApprovalRequest request = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Approval request not found with ID: " + id));
+                .orElseThrow(() -> new ApprovalRequestNotFoundException(id));
         
         if (request.getStatus() != ApprovalStatus.PENDING) {
-            throw new RuntimeException("Request is not in pending status");
+            throw new InvalidApprovalStatusException("Request is not in pending status");
         }
         
         request.setStatus(ApprovalStatus.REJECTED);
         request.setComment(actionDto.getComment());
+        request.setUpdatedAt(LocalDateTime.now());
         
         ApprovalRequest savedRequest = repository.save(request);
         
