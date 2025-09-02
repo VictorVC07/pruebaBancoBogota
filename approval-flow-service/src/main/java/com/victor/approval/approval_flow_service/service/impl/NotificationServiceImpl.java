@@ -18,12 +18,9 @@ public class NotificationServiceImpl implements INotificationService {
         log.info("Requester: {}", request.getRequester());
         log.info("Request ID: {}", request.getId());
         
-        // Here you would integrate with email service, Slack, etc.
-        // For now, we're just logging the notification
-        
         // Simulate notification processing time
         try {
-            Thread.sleep(100); // Simulate external service call
+            Thread.sleep(100); // Simulate delay
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.warn("Notification processing interrupted for request: {}", request.getId());
@@ -31,27 +28,5 @@ public class NotificationServiceImpl implements INotificationService {
         
         log.debug("Approver notification sent successfully for request: {}", request.getId());
     }
-    
-    @Override
-    @Async("notificationTaskExecutor")
-    public void notifyRequesterAsync(ApprovalRequest request, String action) {
-        log.info("NOTIFICATION: Your request has been {} by {}", action, request.getApprover());
-        log.info("Title: {}", request.getTitle());
-        log.info("Status: {}", request.getStatus());
-        log.info("Comment: {}", request.getComment());
-        log.info("Request ID: {}", request.getId());
-        
-        // Here you would integrate with email service, Slack, etc.
-        // For now, we're just logging the notification
-        
-        // Simulate notification processing time
-        try {
-            Thread.sleep(100); // Simulate external service call
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.warn("Notification processing interrupted for request: {}", request.getId());
-        }
-        
-        log.debug("Requester notification sent successfully for request: {}", request.getId());
-    }
+
 }

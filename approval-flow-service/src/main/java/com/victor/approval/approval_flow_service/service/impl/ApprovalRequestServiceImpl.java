@@ -106,9 +106,6 @@ public class ApprovalRequestServiceImpl implements IApprovalRequestService {
         // Publicar evento que se ejecutará después del commit
         eventPublisher.publishEvent(new ApprovalRequestApprovedEvent(this, savedRequest, request.getApprover(), actionDto.getComment()));
         
-        // Notify requester
-        notificationService.notifyRequesterAsync(savedRequest, "approved");
-        
         log.info("Request approved with ID: {}", id);
         return mapper.toResponseDto(savedRequest);
     }
@@ -132,9 +129,6 @@ public class ApprovalRequestServiceImpl implements IApprovalRequestService {
         
         // Publicar evento que se ejecutará después del commit
         eventPublisher.publishEvent(new ApprovalRequestRejectedEvent(this, savedRequest, request.getApprover(), actionDto.getComment()));
-        
-        // Notify requester
-        notificationService.notifyRequesterAsync(savedRequest, "rejected");
         
         log.info("Request rejected with ID: {}", id);
         return mapper.toResponseDto(savedRequest);
