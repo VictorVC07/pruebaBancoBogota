@@ -1,0 +1,45 @@
+services:
+  # Servicio de tu microservicio de Java
+  approval-flow-service:
+    build:
+      context: ./approval-flow-service
+      dockerfile: Dockerfile
+    expose:
+      - "8080"
+    container_name: approval-flow-service-container
+    environment:
+      - JAVA_OPTS=-Xms256m -Xmx512m
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1g
+        reservations:
+          memory: 512m
+    networks:
+      - approval-flow-net
+
+  # Servicio del proxy inverso Nginx
+  nginx:
+    image: nginx:1.25.3-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - approval-flow-service
+    container_name: nginx-proxy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256m
+        reservations:
+          memory: 128m
+    networks:
+      - approval-flow-net
+
+# Define la red compartida
+networks:
+  approval-flow-net:
+    driver: bridge
