@@ -9,6 +9,7 @@ public enum RequestType {
     TECHNICAL_CHANGE("Technical Change"),
     INFRASTRUCTURE("Infrastructure"),
     SECURITY("Security"),
+    DEVOPS("DevOps"),
     OTHER("Other");
     
     private final String displayName;

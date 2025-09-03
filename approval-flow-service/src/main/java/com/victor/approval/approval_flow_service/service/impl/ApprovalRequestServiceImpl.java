@@ -4,6 +4,7 @@ import com.victor.approval.approval_flow_service.dto.ApprovalActionDto;
 import com.victor.approval.approval_flow_service.dto.ApprovalRequestResponseDto;
 import com.victor.approval.approval_flow_service.dto.CreateApprovalRequestDto;
 import com.victor.approval.approval_flow_service.dto.PagedResponseDto;
+import com.victor.approval.approval_flow_service.dto.PendingApprovalsCountDto;
 import com.victor.approval.approval_flow_service.entity.ApprovalRequest;
 import com.victor.approval.approval_flow_service.entity.ApprovalStatus;
 import com.victor.approval.approval_flow_service.event.ApprovalRequestCreatedEvent;
@@ -132,5 +133,19 @@ public class ApprovalRequestServiceImpl implements IApprovalRequestService {
         
         log.info("Request rejected with ID: {}", id);
         return mapper.toResponseDto(savedRequest);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public PendingApprovalsCountDto getPendingApprovalsCount(String approverEmail) {
+        log.info("Counting pending approvals for user: {}", approverEmail);
+        
+        long count = repository.countByApproverAndStatus(approverEmail, ApprovalStatus.PENDING);
+        
+        log.info("User {} has {} pending approvals", approverEmail, count);
+        
+        return PendingApprovalsCountDto.builder()
+                .count(count)
+                .build();
     }
 }

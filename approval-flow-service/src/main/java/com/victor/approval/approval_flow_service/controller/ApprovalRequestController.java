@@ -5,6 +5,7 @@ import com.victor.approval.approval_flow_service.dto.ApprovalRequestResponseDto;
 import com.victor.approval.approval_flow_service.dto.CreateApprovalRequestDto;
 import com.victor.approval.approval_flow_service.dto.PagedResponseDto;
 import com.victor.approval.approval_flow_service.dto.PaginationParams;
+import com.victor.approval.approval_flow_service.dto.PendingApprovalsCountDto;
 import com.victor.approval.approval_flow_service.service.IApprovalRequestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
+
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/api/v1/requests")
@@ -59,6 +62,15 @@ public class ApprovalRequestController extends BasePageableController {
             @PathVariable UUID id,
             @Valid @RequestBody ApprovalActionDto actionDto) {
         ApprovalRequestResponseDto response = service.rejectRequest(id, actionDto);
+        return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/pending-count/{approverEmail}")
+    public ResponseEntity<PendingApprovalsCountDto> getPendingApprovalsCount(
+            @PathVariable String approverEmail) {
+        
+        PendingApprovalsCountDto response = service.getPendingApprovalsCount(approverEmail);
+        
         return ResponseEntity.ok(response);
     }
 }
