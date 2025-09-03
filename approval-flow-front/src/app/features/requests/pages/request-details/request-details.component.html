@@ -1,0 +1,185 @@
+<div class="request-details-container">
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <p-progressSpinner></p-progressSpinner>
+    <p>Loading request details...</p>
+  </div>
+
+  <!-- Request Details -->
+  <div *ngIf="!loading && request">
+    <!-- Header with back button -->
+    <p-toolbar styleClass="mb-4">
+      <ng-template pTemplate="left">
+        <p-button 
+          icon="pi pi-arrow-left" 
+          label="Back to Requests"
+          styleClass="p-button-text"
+          (click)="goBack()">
+        </p-button>
+      </ng-template>
+      <ng-template pTemplate="right">
+        <div class="action-buttons" *ngIf="canShowApprovalActions()">
+          <p-button 
+            label="Approve" 
+            icon="pi pi-check" 
+            styleClass="p-button-success mr-2"
+            (click)="openApprovalDialog()">
+          </p-button>
+          <p-button 
+            label="Reject" 
+            icon="pi pi-times" 
+            styleClass="p-button-danger"
+            (click)="openRejectionDialog()">
+          </p-button>
+        </div>
+      </ng-template>
+    </p-toolbar>
+
+    <!-- Request Information Card -->
+    <p-card header="Request Details" styleClass="request-card mb-4">
+      <div class="request-info-grid">
+        <div class="info-item">
+          <label>Request ID:</label>
+          <span class="value">{{ request.id }}</span>
+        </div>
+        
+        <div class="info-item">
+          <label>Status:</label>
+          <p-tag 
+            [value]="request.status" 
+            [severity]="getStatusSeverity(request.status)">
+          </p-tag>
+        </div>
+        
+        <div class="info-item">
+          <label>Type:</label>
+          <p-tag 
+            [value]="request.requestType" 
+            [severity]="getTypeSeverity(request.requestType)">
+          </p-tag>
+        </div>
+        
+        <div class="info-item">
+          <label>Created:</label>
+          <span class="value">{{ request.createdAt | date:'medium' }}</span>
+        </div>
+        
+        <div class="info-item">
+          <label>Last Updated:</label>
+          <span class="value">{{ request.updatedAt | date:'medium' }}</span>
+        </div>
+      </div>
+      
+      <div class="request-details-section">
+        <div class="detail-item">
+          <label>Title:</label>
+          <h3 class="request-title">{{ request.title }}</h3>
+        </div>
+        
+        <div class="detail-item">
+          <label>Description:</label>
+          <p class="request-description">{{ request.description }}</p>
+        </div>
+        
+        <div class="people-info">
+          <div class="person-item">
+            <label>Requester:</label>
+            <div class="person-details">
+              <i class="pi pi-user"></i>
+              <span>{{ request.requester }}</span>
+            </div>
+          </div>
+          
+          <div class="person-item">
+            <label>Approver:</label>
+            <div class="person-details">
+              <i class="pi pi-user-edit"></i>
+              <span>{{ request.approver }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="detail-item" *ngIf="request.comment">
+          <label>Comments:</label>
+          <p class="request-comment">{{ request.comment }}</p>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- Status Information -->
+    <p-card *ngIf="!canPerformAction()" header="Status Information" styleClass="status-card">
+      <div class="status-message">
+        <i class="pi" [ngClass]="{
+          'pi-check-circle text-success': request.status === RequestStatus.APPROVED,
+          'pi-times-circle text-danger': request.status === RequestStatus.REJECTED
+        }"></i>
+        <span *ngIf="request.status === RequestStatus.APPROVED" class="status-text">
+          This request has been approved.
+        </span>
+        <span *ngIf="request.status === RequestStatus.REJECTED" class="status-text">
+          This request has been rejected.
+        </span>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Comment Dialog -->
+  <p-dialog 
+    [(visible)]="showCommentDialog" 
+    [header]="currentAction === 'approve' ? 'Approve Request' : 'Reject Request'"
+    [modal]="true" 
+    [closable]="false"
+    [style]="{width: '500px'}">
+    
+    <div class="dialog-content">
+      <p class="dialog-message">
+        <i class="pi" [ngClass]="{
+          'pi-check-circle text-success': currentAction === 'approve',
+          'pi-exclamation-triangle text-warning': currentAction === 'reject'
+        }"></i>
+        Are you sure you want to {{ currentAction }} this request?
+      </p>
+      
+      <form [formGroup]="commentForm">
+        <div class="field">
+          <label for="comment">
+            {{ currentAction === 'approve' ? 'Comment *:' : 'Rejection reason *:' }}
+          </label>
+          <textarea 
+            id="comment"
+            pInputTextarea 
+            formControlName="comment"
+            [class.ng-invalid]="isFieldInvalid('comment')"
+            [placeholder]="currentAction === 'approve' ? 'Add a comment *' : 'Please provide a reason for rejection *'"
+            rows="4"
+            class="w-full">
+          </textarea>
+          <small 
+            class="p-error" 
+            *ngIf="isFieldInvalid('comment')">
+            {{ getFieldError('comment') }}
+          </small>
+        </div>
+      </form>
+    </div>
+    
+    <ng-template pTemplate="footer">
+      <div class="dialog-buttons">
+        <p-button 
+          label="Cancel" 
+          icon="pi pi-times" 
+          styleClass="p-button-text"
+          (click)="cancelAction()"
+          [disabled]="actionLoading">
+        </p-button>
+        <p-button 
+          [label]="currentAction === 'approve' ? 'Approve' : 'Reject'" 
+          [icon]="currentAction === 'approve' ? 'pi pi-check' : 'pi pi-times'"
+          [styleClass]="currentAction === 'approve' ? 'p-button-success' : 'p-button-danger'"
+          (click)="confirmAction()"
+          [loading]="actionLoading">
+        </p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</div>

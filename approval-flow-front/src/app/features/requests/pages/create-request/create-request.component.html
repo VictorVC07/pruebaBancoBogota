@@ -1,0 +1,125 @@
+<div class="create-request-container">
+  <p-card header="Create New Request" styleClass="request-card">
+    <form [formGroup]="requestForm" (ngSubmit)="onSubmit()">
+      <div class="p-fluid">
+        <!-- Title Field -->
+        <div class="field">
+          <label for="title">Title *</label>
+          <input 
+            id="title"
+            type="text" 
+            pInputText 
+            formControlName="title"
+            [class.ng-invalid]="isFieldInvalid('title')"
+            placeholder="Enter request title"
+          />
+          <small 
+            class="p-error" 
+            *ngIf="isFieldInvalid('title')">
+            {{ getFieldError('title') }}
+          </small>
+        </div>
+
+        <!-- Description Field -->
+        <div class="field">
+          <label for="description">Description *</label>
+          <textarea 
+            id="description"
+            pInputTextarea 
+            formControlName="description"
+            [class.ng-invalid]="isFieldInvalid('description')"
+            placeholder="Enter detailed description"
+            rows="4"
+          ></textarea>
+          <small 
+            class="p-error" 
+            *ngIf="isFieldInvalid('description')">
+            {{ getFieldError('description') }}
+          </small>
+        </div>
+
+        <!-- Requester Field -->
+        <div class="field">
+          <label for="requester">Requester Email *</label>
+          <input 
+            id="requester"
+            type="email" 
+            pInputText 
+            formControlName="requester"
+            [class.ng-invalid]="isFieldInvalid('requester')"
+            placeholder="requester@example.com"
+          />
+          <small class="p-text-secondary">
+            <i class="pi pi-info-circle"></i>
+            Auto-filled from current session
+          </small>
+          <small 
+            class="p-error" 
+            *ngIf="isFieldInvalid('requester')">
+            {{ getFieldError('requester') }}
+          </small>
+        </div>
+
+        <!-- Approver Field -->
+        <!-- En la sección del campo approver -->
+        <div class="field">
+          <label for="approver">Approver *</label>
+          <input 
+            id="approver" 
+            type="email" 
+            pInputText 
+            formControlName="approver"
+            placeholder="Approver email"
+            [class.ng-invalid]="isFieldInvalid('approver')"
+            readonly
+          />
+          <small 
+            class="p-error" 
+            *ngIf="isFieldInvalid('approver')">
+            {{ getFieldError('approver') }}
+          </small>
+        </div>
+
+        <!-- Request Type Field -->
+        <div class="field">
+          <label for="requestType">Request Type *</label>
+          <p-dropdown
+            id="requestType"
+            formControlName="requestType"
+            [options]="requestTypes"
+            placeholder="Select request type"
+            optionLabel="label"
+            optionValue="value"
+            [disabled]="loadingTypes"
+            [class.ng-invalid]="isFieldInvalid('requestType')"
+          ></p-dropdown>
+          <small class="p-info" *ngIf="loadingTypes">
+            Loading request types...
+          </small>
+          <small class="p-error" *ngIf="isFieldInvalid('requestType') && !loadingTypes">
+            {{ getFieldError('requestType') }}
+          </small>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="field button-group">
+          <p-button 
+            label="Cancel" 
+            icon="pi pi-times" 
+            styleClass="p-button-secondary"
+            (onClick)="onCancel()"
+            [disabled]="loading"
+          ></p-button>
+          
+          <p-button 
+            label="Create Request" 
+            icon="pi pi-check" 
+            type="submit"
+            [loading]="loading"
+            [disabled]="requestForm.invalid"
+          ></p-button>
+        </div>
+      </div>
+    </form>
+  </p-card>
+</div>

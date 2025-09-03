@@ -1,0 +1,29 @@
+<div class="app-container">
+  <!-- Header -->
+  <header class="app-header">
+    <p-toolbar>
+      <div class="p-toolbar-group-left">
+        <h2 class="app-title">
+          <i class="pi pi-check-circle"></i>
+          Approval Flow System
+        </h2>
+      </div>
+      
+      <div class="p-toolbar-group-right">
+        <app-notification-bell></app-notification-bell>
+        <app-user-selector></app-user-selector>
+      </div>
+    </p-toolbar>
+  </header>
+
+  <!-- Main Content -->
+  <main class="app-main">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Toast Messages -->
+  <p-toast position="top-right"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog></p-confirmDialog>
+</div>

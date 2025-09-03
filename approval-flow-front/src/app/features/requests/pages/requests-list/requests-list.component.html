@@ -1,0 +1,175 @@
+<div class="requests-list-container">
+  <!-- Header with title and new request button -->
+  <p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+      <h2 class="m-0">Approval Requests</h2>
+    </ng-template>
+    <ng-template pTemplate="right">
+      <p-button 
+        *ngIf="canCreateRequests()"
+        label="New Request" 
+        icon="pi pi-plus" 
+        routerLink="/requests/create"
+        styleClass="p-button-success">
+      </p-button>
+    </ng-template>
+  </p-toolbar>
+
+  <!-- Filters Panel -->
+  <p-panel header="Filters" [toggleable]="true" [collapsed]="true" styleClass="mb-4">
+    <div class="filter-grid">
+      <div class="filter-item">
+        <label for="statusFilter">Status:</label>
+        <p-dropdown 
+          id="statusFilter"
+          [options]="statusOptions" 
+          [(ngModel)]="filters.status" 
+          optionLabel="label" 
+          optionValue="value"
+          placeholder="All Statuses"
+          [showClear]="true"
+          (onChange)="onFilterChange()">
+        </p-dropdown>
+      </div>
+      
+      <div class="filter-item">
+        <label for="typeFilter">Type:</label>
+        <p-dropdown 
+          id="typeFilter"
+          [options]="typeOptions" 
+          [(ngModel)]="filters.requestType" 
+          optionLabel="label" 
+          optionValue="value"
+          placeholder="All Types"
+          [showClear]="true"
+          (onChange)="onFilterChange()">
+        </p-dropdown>
+      </div>
+      
+      <div class="filter-item">
+        <label for="requesterFilter">Requester:</label>
+        <input 
+          id="requesterFilter"
+          type="text" 
+          pInputText 
+          [(ngModel)]="filters.requester" 
+          placeholder="Filter by requester"
+          (input)="onTextFilterChange()">
+      </div>
+      
+      <div class="filter-item">
+        <label for="approverFilter">Approver:</label>
+        <input 
+          id="approverFilter"
+          type="text" 
+          pInputText 
+          [(ngModel)]="filters.approver" 
+          placeholder="Filter by approver"
+          (input)="onTextFilterChange()">
+      </div>
+    </div>
+    
+    <!-- Agregar botón para limpiar filtros -->
+    <div class="filter-actions mt-3">
+      <p-button 
+        label="Clear All Filters" 
+        icon="pi pi-times" 
+        styleClass="p-button-outlined p-button-secondary"
+        (onClick)="clearAllFilters()">
+      </p-button>
+    </div>
+  </p-panel>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <p-progressSpinner></p-progressSpinner>
+    <p>Loading requests...</p>
+  </div>
+
+  <!-- Requests Table -->
+  <p-table 
+    *ngIf="!loading"
+    [value]="requests" 
+    [paginator]="false"
+    [rows]="pageSize"
+    [loading]="loading"
+    styleClass="p-datatable-gridlines"
+    [tableStyle]="{'min-width': '50rem'}">
+    
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Type</th>
+        <th>Requester</th>
+        <th>Approver</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    
+    <ng-template pTemplate="body" let-request>
+      <tr>
+        <td>{{ request.id }}</td>
+        <td>
+          <div class="request-title">
+            <strong>{{ request.title }}</strong>
+          </div>
+        </td>
+        <td>
+          <p-tag 
+            [value]="request.requestType" 
+            [severity]="getTypeSeverity(request.requestType)">
+          </p-tag>
+        </td>
+        <td>{{ request.requester }}</td>
+        <td>{{ request.approver }}</td>
+        <td>
+          <p-tag 
+            [value]="request.status" 
+            [severity]="getStatusSeverity(request.status)">
+          </p-tag>
+        </td>
+        <td>{{ request.createdAt | date:'short' }}</td>
+        <td>
+          <p-button 
+            icon="pi pi-eye" 
+            styleClass="p-button-rounded p-button-text p-button-info"
+            pTooltip="View Details"
+            (click)="viewRequest(request.id)">
+          </p-button>
+        </td>
+      </tr>
+    </ng-template>
+    
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="8" class="text-center">
+          <div class="empty-state">
+            <i class="pi pi-inbox" style="font-size: 3rem; color: var(--text-color-secondary);"></i>
+            <h4>No requests found</h4>
+            <p>There are no approval requests matching your criteria.</p>
+            <p-button 
+              label="Create New Request" 
+              icon="pi pi-plus" 
+              routerLink="/requests/create"
+              styleClass="p-button-outlined">
+            </p-button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Custom Pagination -->
+  <p-paginator 
+  *ngIf="!loading"
+  [rows]="pageSize" 
+  [totalRecords]="totalRecords || 100" 
+  [first]="(currentPage - 1) * pageSize"
+  [rowsPerPageOptions]="[5, 10, 20]"
+  (onPageChange)="onPageChange($event)"
+  styleClass="mt-3">
+</p-paginator>
+</div>

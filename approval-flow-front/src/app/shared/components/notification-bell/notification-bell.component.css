@@ -1,0 +1,24 @@
+.notification-bell {
+  display: inline-block;
+}
+
+.notification-bell .p-button {
+  position: relative;
+}
+
+.notification-bell .p-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-bell .p-button:hover {
+  background-color: var(--surface-hover);
+}

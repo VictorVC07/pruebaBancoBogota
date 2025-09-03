@@ -1,0 +1,48 @@
+<div class="user-selector">
+    <!-- Usuario actual -->
+    <div class="current-user" (click)="toggleSelector()">
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="pi pi-user"></i>
+            </div>
+            <div class="user-details" *ngIf="currentUser">
+                <span class="user-name">{{ currentUser.name || 'Usuario' }}</span>
+                <span class="user-role" [class]="getRoleBadgeClass(currentUser.role)">
+                    {{ getRoleText(currentUser.role) }}
+                </span>
+            </div>
+        </div>
+        <i class="pi pi-chevron-down" [class.rotated]="isOpen"></i>
+    </div>
+
+    <!-- Lista de usuarios -->
+    <div class="user-dropdown" *ngIf="isOpen">
+        <div class="dropdown-header">
+            <h4>Seleccionar Usuario</h4>
+            <small>Simula diferentes roles y permisos</small>
+        </div>
+
+        <div class="user-list">
+            <div class="user-option" *ngFor="let user of availableUsers" [class.selected]="currentUser?.id === user.id"
+                (click)="selectUser(user)">
+
+                <div class="user-avatar">
+                    <i class="pi pi-user"></i>
+                </div>
+
+                <div class="user-info">
+                    <div class="user-name">{{ user.name }}</div>
+                    <div class="user-email">{{ user.email }}</div>
+                    <div class="user-department">{{ user.department }}</div>
+                </div>
+
+                <span class="role-badge" [class]="getRoleBadgeClass(user.role)">
+                    {{ getRoleText(user.role) }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay para cerrar el dropdown -->
+    <div class="dropdown-overlay" *ngIf="isOpen" (click)="toggleSelector()"></div>
+</div>

@@ -1,0 +1,10 @@
+<div class="notification-bell" *ngIf="isApprover()">
+  <p-button 
+    icon="pi pi-bell" 
+    [badge]="pendingCount > 0 ? pendingCount.toString() : ''"
+    badgeClass="p-badge-danger"
+    class="p-button-rounded p-button-text"
+    [title]="'Solicitudes pendientes: ' + pendingCount"
+    routerLink="/requests/list">
+  </p-button>
+</div>

@@ -1,0 +1,57 @@
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  background: #ffffff;
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  .app-title {
+    margin: 0;
+    color: #495057;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    i {
+      color: #28a745;
+    }
+  }
+}
+
+.app-main {
+  flex: 1;
+  background: #f8f9fa;
+  padding: 2rem;
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+// Global styles for the application
+:host ::ng-deep {
+  .p-toolbar {
+    border: none;
+    border-radius: 0;
+    padding: 1rem 2rem;
+    
+    @media (max-width: 768px) {
+      padding: 1rem;
+      
+      .p-toolbar-group-left,
+      .p-toolbar-group-right {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+  }
+  
+  .p-toast {
+    z-index: 9999;
+  }
+}
